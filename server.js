@@ -1,7 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
-const bodyParser = require("body-parser");
 const passport = require("passport");
 //Import routes
 const user = require("./routes/api/user");
@@ -12,7 +11,11 @@ const post = require("./routes/api/post");
 const db = require("./config/key").mongoURI;
 // Db connection
 mongoose
-	.connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
+	.connect(db, {
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+		useFindAndModify: false,
+	})
 	.then(() => console.log("Db connected"))
 	.catch((err) => console.log(err));
 
@@ -25,8 +28,8 @@ app.use(passport.initialize());
 // passport config
 require("./config/passport")(passport);
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(express.urlencoded());
+app.use(express.json());
 
 // Routes
 app.use("/api/user", user);

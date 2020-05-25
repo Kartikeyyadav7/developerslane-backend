@@ -23,11 +23,11 @@ router.get("/test", (req, res) => {
 // @access Public
 
 router.post("/register", (req, res) => {
-	const { errors, isValid } = ValidateRegister(req.body);
+	// const { errors, isValid } = ValidateRegister(req.body);
 
-	if (!isValid) {
-		return res.status(400).json(errors);
-	}
+	// if (!isValid) {
+	// 	return res.status(400).json(errors);
+	// }
 	const avatar = gravatar.url(req.body.email, {
 		s: "200",
 		r: "pg",
@@ -35,8 +35,8 @@ router.post("/register", (req, res) => {
 	});
 	User.findOne({ email: req.body.email }).then((user) => {
 		if (user) {
-			errors.email = "Email already exists";
-			res.status(400).json(errors);
+			// errors.email = "Email already exists";
+			res.status(400).json({ email: "Email already exists" });
 		} else {
 			const newUser = new User({
 				name: req.body.name,
@@ -53,7 +53,7 @@ router.post("/register", (req, res) => {
 					newUser
 						.save()
 						.then((user) => {
-							res.json({ user });
+							return res.json({ user });
 						})
 						.catch((err) => console.log(err));
 				});
@@ -67,17 +67,17 @@ router.post("/register", (req, res) => {
 // @access Public
 
 router.post("/login", (req, res) => {
-	const { errors, isValid } = ValidateLogin(req.body);
+	// const { errors, isValid } = ValidateLogin(req.body);
 
-	if (!isValid) {
-		return res.status(400).json(errors);
-	}
+	// if (!isValid) {
+	// 	return res.status(400).json(errors);
+	// }
 	const { email, password } = req.body;
 	User.findOne({ email }).then((user) => {
 		// Checking from user
 		if (!user) {
-			errors.email("User not found");
-			return res.status(404).json(errors);
+			// errors.email("User not found");
+			return res.status(404).json({ email: "User not found" });
 		}
 
 		// Checking for password
@@ -86,14 +86,16 @@ router.post("/login", (req, res) => {
 				// user info to be passed along with the token i.e payload
 				const payload = {
 					name: user.name,
-					id: user._id,
+					id: user.id,
 					email: user.email,
 					avatar: user.avatar,
 				};
 
 				// JWT token
 				jwt.sign(payload, key.secret, { expiresIn: 3600 }, (err, token) => {
-					if (err) throw err;
+					if (err) {
+						return res.status(400).json({ err: "errror occured" });
+					}
 					res.json({
 						success: true,
 						token: "Bearer " + token,
@@ -101,7 +103,7 @@ router.post("/login", (req, res) => {
 				});
 			} else {
 				errors.password = "Incorrect Password";
-				return res.status(400).json(errors);
+				res.status(400).json(errors);
 			}
 		});
 	});
