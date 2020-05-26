@@ -28,9 +28,9 @@ app.use(passport.initialize());
 // passport config
 require("./config/passport")(passport);
 
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
+app.use("/uploads", express.static("uploads"));
 // Routes
 app.use("/api/user", user);
 app.use("/api/profile", profile);

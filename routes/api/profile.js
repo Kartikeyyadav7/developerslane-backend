@@ -3,7 +3,6 @@ const router = express.Router();
 const passport = require("passport");
 const mongoose = require("mongoose");
 const Profile = require("../../models/Profile");
-const ValidateProfile = require("../../validators/profile");
 
 // @route  GET api/profile/test
 // @desc   This is test route
@@ -104,12 +103,14 @@ router.post(
 			facebook,
 			twitter,
 			instagram,
+			handle,
 			linkedin,
 		} = req.body;
 
 		// Build profile object
 		const profileFields = {};
 		profileFields.user = req.user.id;
+		if (handle) profileFields.handle = handle;
 		if (company) profileFields.company = company;
 		if (website) profileFields.website = website;
 		if (location) profileFields.location = location;

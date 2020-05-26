@@ -5,11 +5,7 @@ const bycrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const key = require("../../config/key");
 const passport = require("passport");
-// User module
 const User = require("../../models/User");
-const ValidateRegister = require("../../validators/register");
-const ValidateLogin = require("../../validators/login");
-
 // @route  GET api/user/test
 // @desc   This is test route
 // @access Public
@@ -23,11 +19,6 @@ router.get("/test", (req, res) => {
 // @access Public
 
 router.post("/register", (req, res) => {
-	// const { errors, isValid } = ValidateRegister(req.body);
-
-	// if (!isValid) {
-	// 	return res.status(400).json(errors);
-	// }
 	const avatar = gravatar.url(req.body.email, {
 		s: "200",
 		r: "pg",
@@ -35,7 +26,6 @@ router.post("/register", (req, res) => {
 	});
 	User.findOne({ email: req.body.email }).then((user) => {
 		if (user) {
-			// errors.email = "Email already exists";
 			res.status(400).json({ email: "Email already exists" });
 		} else {
 			const newUser = new User({
@@ -67,16 +57,10 @@ router.post("/register", (req, res) => {
 // @access Public
 
 router.post("/login", (req, res) => {
-	// const { errors, isValid } = ValidateLogin(req.body);
-
-	// if (!isValid) {
-	// 	return res.status(400).json(errors);
-	// }
 	const { email, password } = req.body;
 	User.findOne({ email }).then((user) => {
 		// Checking from user
 		if (!user) {
-			// errors.email("User not found");
 			return res.status(404).json({ email: "User not found" });
 		}
 
