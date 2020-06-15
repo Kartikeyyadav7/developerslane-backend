@@ -1,0 +1,8 @@
+{
+	"env": {
+		"DB_USER": "Kartikey",
+		"DB_PASSWORD": "Mydatabase",
+		"DB_NAME": "test",
+		"JWT_KEY": "alsdkjasdf"
+	}
+}

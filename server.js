@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
 const passport = require("passport");
+const cors = require("cors");
 //Import routes
 const user = require("./routes/api/user");
 const profile = require("./routes/api/profile");
@@ -30,6 +31,7 @@ require("./config/passport")(passport);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cors());
 app.use("/uploads", express.static("uploads"));
 // Routes
 app.use("/api/user", user);

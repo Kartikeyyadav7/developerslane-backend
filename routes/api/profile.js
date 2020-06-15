@@ -3,6 +3,9 @@ const router = express.Router();
 const passport = require("passport");
 const mongoose = require("mongoose");
 const Profile = require("../../models/Profile");
+const Post = require("../../models/Post");
+const User = require("../../models/User");
+const { check, validationResult } = require("express-validator");
 
 // @route  GET api/profile/test
 // @desc   This is test route
@@ -84,14 +87,24 @@ router.get(
 	}
 );
 
-// @route  GET api/profile/
+// @route  POST api/profile/
 // @desc   Create and update profile
 // @access Private
 
 router.post(
 	"/",
+	[
+		check("handle", "Handle is required").not().isEmpty(),
+		check("status", "Status is required").not().isEmpty(),
+		check("skills", "Skills is required").not().isEmpty(),
+	],
 	passport.authenticate("jwt", { session: false }),
 	async (req, res) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(400).json({ errors: errors.array()[0].msg });
+		}
+
 		const {
 			company,
 			website,
@@ -139,6 +152,27 @@ router.post(
 			console.error(err.message);
 			res.status(500).send("Server Error");
 		}
+	}
+);
+
+// @route  DELETE api/profile/
+// @desc   delete account
+// @access Private
+
+router.delete(
+	"/",
+	passport.authenticate("jwt", { session: false }),
+	(req, res) => {
+		Profile.findOneAndRemove({ user: req.user.id })
+			.then(() =>
+				User.findOneAndRemove({ _id: req.user.id }).then(() =>
+					res.json({ msg: "user deleted" })
+				)
+			)
+
+			.catch((err) => res.status(500).json({ msg: "not able to delete user" }));
+		// remove the profile
+		// remove the user
 	}
 );
 

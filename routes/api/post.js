@@ -60,7 +60,6 @@ router.post(
 			user: req.user.id,
 			postImage: req.file.path,
 		});
-
 		newPost
 			.save()
 			.then((post) => {
@@ -149,7 +148,7 @@ router.put(
 // @desc   Unlike a posts
 // @access Private
 
-router.delete(
+router.post(
 	"/unlike/:id",
 	passport.authenticate("jwt", { session: false }),
 	(req, res) => {
