@@ -6,6 +6,14 @@ const Post = require("../../models/Post");
 const Profile = require("../../models/Profile");
 const multer = require("multer");
 
+const cloudinary = require("cloudinary").v2;
+
+cloudinary.config({
+	cloud_name: process.env.CLOUD_NAME,
+	api_key: process.env.API_KEY,
+	api_secret: process.env.API_SECRET,
+});
+
 // defining how files to be stored
 const storage = multer.diskStorage({
 	destination: (req, file, cb) => {
@@ -51,21 +59,19 @@ router.post(
 	"/",
 	passport.authenticate("jwt", { session: false }),
 	upload.single("postImage"),
-	(req, res) => {
-		console.log(req.file);
+	async (req, res) => {
+		const result = await cloudinary.uploader.upload(req.file.path);
+
 		const newPost = new Post({
 			text: req.body.text,
 			name: req.body.name,
 			avatar: req.body.avatar,
 			user: req.user.id,
-			postImage: req.file.path,
+			postImage: result.secure_url,
 		});
-		newPost
-			.save()
-			.then((post) => {
-				res.json(post);
-			})
-			.catch((err) => res.status(400).json(err));
+
+		const postDetails = await newPost.save();
+		res.json(postDetails);
 	}
 );
 
