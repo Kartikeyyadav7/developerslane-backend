@@ -3,7 +3,7 @@
 		"DB_USER": "Kartikey",
 		"DB_PASSWORD": "Mydatabase",
 		"DB_NAME": "test",
-		"JWT_KEY": "alsdkjasdf",
+		"SECRET": "alsdkjasdf",
 		"CLOUD_NAME": "dhc7nkut3",
 		"API_KEY": "863235225638562",
 		"API_SECRET": "ddFyJz-BqNV1qGWlcLEFPPXJPy0"
